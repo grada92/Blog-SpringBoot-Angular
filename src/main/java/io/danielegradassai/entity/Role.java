@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,8 +23,8 @@ public class Role {
     private Long id;
     @Column(nullable = false, unique = true)
     private String authority;
-    @ManyToMany(mappedBy = "ruoli")
-    private List<User> users = new ArrayList<>();
+    @ManyToMany(mappedBy = "roles")
+    private Set<User> users = new HashSet<>();
     public Role(String authority) { this.authority = authority;}
     @Override
     public String toString() {

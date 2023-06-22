@@ -25,7 +25,7 @@ public class Article {
     @Column(nullable = true)
     private String imageUrl;
     @ManyToOne
-    @Column(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
     @OneToMany(mappedBy = "article")
     private List<Comment> comments;

@@ -19,10 +19,10 @@ public class Vote {
     @Column(nullable = false)
     private boolean liked;
     @ManyToOne
-    @Column(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
     @ManyToOne
-    @Column(name = "article_id", nullable = false)
+    @JoinColumn(name = "article_id", nullable = false)
     private Article article;
 
     public Vote(boolean liked, User user, Article article) {

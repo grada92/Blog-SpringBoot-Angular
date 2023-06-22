@@ -19,10 +19,10 @@ public class Comment {
     @Column(nullable = false)
     private String content;
     @ManyToOne
-    @Column(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
     @ManyToOne
-    @Column(name = "article_id", nullable = false)
+    @JoinColumn(name = "article_id", nullable = false)
     private Article article;
 
     public Comment(String content, User user, Article article) {

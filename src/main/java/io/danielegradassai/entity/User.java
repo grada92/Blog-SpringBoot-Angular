@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -18,8 +20,12 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
+    private String firstName;
+    @Column(nullable = false)
+    private String lastName;
     @Column(nullable = false, unique = true)
-    private String username;
+    private String email;
     @Column(nullable = false)
     private String password;
     @OneToMany(mappedBy = "user")
@@ -29,11 +35,13 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Vote> votes = new ArrayList<>();
     @ManyToMany(fetch = FetchType.EAGER)
-    private List<Role> roles;
+    private Set<Role> roles;
 
-    public User(String username, String password, List<Role> ruoli) {
-        this.username = username;
+    public User(String firstName, String lastName, String email, String password, Set<Role> roles) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
         this.password = password;
-        this.roles = ruoli;
+        this.roles = roles;
     }
 }
