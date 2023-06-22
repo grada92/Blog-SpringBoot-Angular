@@ -14,19 +14,19 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ArticleInputDto {
+public class ArticleOutputDto {
 
-    @NotNull(message = "User ID non può essere nullo")
+    @NotNull(message = "L'ID dell'utente non può essere nullo")
     private Long userId;
-    @NotBlank(message = "Titolo è richiesto")
-    @Size(max = 100, message = "Titolo non può essere superiore a 100 caratteri")
+    @NotBlank(message = "Il titolo dell'articolo non può essere vuoto")
+    @Size(max = 100, message = "Il titolo dell'articolo può contenere al massimo 100 caratteri")
     private String title;
-    @NotBlank(message = "Richiesto contenuto")
+    @NotBlank(message = "Il contenuto dell'articolo non può essere vuoto")
     private String content;
     private String imageUrl;
-    @NotNull(message = "Categoria non può essere nulla")
+    @NotNull(message = "La lista delle categorie non può essere nulla")
     private List<Long> categoryIds;
-    @NotNull(message = "Tag non può essere nullo")
+    @NotNull(message = "La lista dei tag non può essere nulla")
     private List<Long> tagIds;
 
 }
