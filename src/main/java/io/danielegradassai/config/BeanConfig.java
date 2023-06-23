@@ -39,7 +39,7 @@ public class BeanConfig {
         httpSecurity.sessionManagement(sessionManagementConfigurer ->
                 sessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         httpSecurity.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
-            authorizationManagerRequestMatcherRegistry.requestMatchers("/error", "/user/login", "user/sign", "/user").permitAll();
+            authorizationManagerRequestMatcherRegistry.requestMatchers("/**").permitAll();
         });
         httpSecurity.addFilterBefore(new Filter() {
             @Override

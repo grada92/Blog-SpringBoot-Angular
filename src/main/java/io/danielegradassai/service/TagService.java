@@ -9,4 +9,10 @@ public interface TagService {
     TagOutputDto create(TagInputDto tagInputDto);
 
     List<TagOutputDto> readAll();
+
+    TagOutputDto readById(Long id);
+
+    TagOutputDto update(TagInputDto tagInputDto, Long id);
+
+    void delete(Long id);
 }
