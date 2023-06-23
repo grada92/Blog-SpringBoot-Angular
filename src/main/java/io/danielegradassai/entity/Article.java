@@ -20,10 +20,11 @@ public class Article {
     private Long id;
     @Column(nullable = false)
     private String title;
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
+    @Lob
     @Column(nullable = true)
-    private String imageUrl;
+    private byte[] image;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

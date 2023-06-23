@@ -25,8 +25,8 @@ public class ArticleOutputDto {
     private String content;
     private String imageUrl;
     @NotNull(message = "La lista delle categorie non può essere nulla")
-    private List<Long> categoryIds;
+    private List<CategoryDto> categories;
     @NotNull(message = "La lista dei tag non può essere nulla")
-    private List<Long> tagIds;
+    private List<TagDto> tags;
 
 }

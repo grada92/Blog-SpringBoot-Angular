@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -23,10 +24,10 @@ public class ArticleInputDto {
     private String title;
     @NotBlank(message = "Richiesto contenuto")
     private String content;
-    private String imageUrl;
+    private MultipartFile image;
     @NotNull(message = "Categoria non può essere nulla")
-    private List<Long> categoryIds;
+    private List<Long> categories;
     @NotNull(message = "Tag non può essere nullo")
-    private List<Long> tagIds;
+    private List<Long> tags;
 
 }
