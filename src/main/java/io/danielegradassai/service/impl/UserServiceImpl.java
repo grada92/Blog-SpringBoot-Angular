@@ -1,14 +1,13 @@
 package io.danielegradassai.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.danielegradassai.dto.user.AuthenticationDto;
-import io.danielegradassai.dto.user.LoginUserDto;
-import io.danielegradassai.dto.user.RegistrationUserDto;
-import io.danielegradassai.dto.user.UserOutputDto;
+import io.danielegradassai.dto.role.RoleOutputDto;
+import io.danielegradassai.dto.user.*;
 import io.danielegradassai.entity.Role;
 import io.danielegradassai.entity.User;
 import io.danielegradassai.repository.RoleRepository;
 import io.danielegradassai.repository.UserRepository;
+import io.danielegradassai.service.EmailService;
 import io.danielegradassai.service.UserService;
 import io.danielegradassai.util.JWTUtil;
 import io.danielegradassai.util.PasswordUtil;
@@ -20,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +31,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final ModelMapper modelMapper;
+    private final EmailService emailService;
     private final JWTUtil jwtUtil;
     private final ObjectMapper objectMapper;
     private final Validator validator;
@@ -42,7 +43,9 @@ public class UserServiceImpl implements UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username o password invalidi");
         }
         User user = userRepository.findByEmail(userDto.getEmail()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "UTENTE NON TROVATO"));
-
+        if(!user.getPassword().equals(PasswordUtil.crypt(userDto.getPassword()))){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Password errata");
+        }
         try {
             UserOutputDto userOutputDto = modelMapper.map(user, UserOutputDto.class);
             Map<String, String > claimsPrivati = Map.of("user", objectMapper.writeValueAsString(userOutputDto));
@@ -67,8 +70,47 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<RoleOutputDto> findRolesById(Long id) {
+        return userRepository.findRolesByUserId(id).stream().map(role -> modelMapper.map(role, RoleOutputDto.class)).toList();
+    }
+
+    @Override
     public List<UserOutputDto> findAll() {
         return userRepository.findAll().stream().map(m -> modelMapper.map(m, UserOutputDto.class)).toList();
+    }
+
+    @Override
+    public List<UserOutputDto> findAllStaff() {
+        List<User> staffUsers = userRepository.findByRolesAuthority("ROLE_STAFF");
+        return staffUsers.stream()
+                .map(user -> modelMapper.map(user, UserOutputDto.class)).toList();
+    }
+
+    @Override
+    public UserOutputDto staffRegistration(StaffRegistrationDto registrationUserDto) {
+        Set<ConstraintViolation<StaffRegistrationDto>> errors = validator.validate(registrationUserDto);
+        if(!errors.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Campi invalidi: riprova");
+        }
+        User user = modelMapper.map(registrationUserDto, User.class);
+        user.setRoles(new HashSet<>(Set.of(
+                roleRepository.findByAuthority("ROLE_USER").orElseGet(()->roleRepository.save(new Role("ROLE_USER"))),
+                roleRepository.findByAuthority("ROLE_STAFF").orElseGet(()->roleRepository.save(new Role("ROLE_STAFF"))))));
+        String password = PasswordUtil.generate();
+        user.setPassword(password);
+        user.setPassword(PasswordUtil.crypt(password));
+        user = userRepository.save(user);
+        emailService.sendConfirmationEmail(user);
+        return modelMapper.map(user, UserOutputDto.class);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        if(!user.getRoles().contains(roleRepository.findByAuthority("ROLE_STAFF").get())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "l' utente selezionato non è un membro dello staff.");
+        }
+        userRepository.deleteById(id);
     }
 
 }

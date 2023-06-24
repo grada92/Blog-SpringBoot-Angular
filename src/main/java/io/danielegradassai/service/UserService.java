@@ -1,9 +1,7 @@
 package io.danielegradassai.service;
 
-import io.danielegradassai.dto.user.AuthenticationDto;
-import io.danielegradassai.dto.user.LoginUserDto;
-import io.danielegradassai.dto.user.RegistrationUserDto;
-import io.danielegradassai.dto.user.UserOutputDto;
+import io.danielegradassai.dto.role.RoleOutputDto;
+import io.danielegradassai.dto.user.*;
 
 import java.util.List;
 
@@ -12,5 +10,13 @@ public interface UserService {
 
     UserOutputDto signIn(RegistrationUserDto registrationUserDto);
 
+    List<RoleOutputDto> findRolesById(Long id);
+
     List<UserOutputDto> findAll();
+
+    List<UserOutputDto> findAllStaff();
+
+    UserOutputDto staffRegistration(StaffRegistrationDto registrationUserDto);
+
+    void deleteById(Long id);
 }

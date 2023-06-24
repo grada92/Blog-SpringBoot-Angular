@@ -17,7 +17,6 @@ import java.util.List;
 @NoArgsConstructor
 public class ArticleInputDto {
 
-    @NotNull(message = "User ID non può essere nullo")
     private Long userId;
     @NotBlank(message = "Titolo è richiesto")
     @Size(max = 100, message = "Titolo non può essere superiore a 100 caratteri")

@@ -1,9 +1,7 @@
 package io.danielegradassai.controller;
 
-import io.danielegradassai.dto.user.AuthenticationDto;
-import io.danielegradassai.dto.user.LoginUserDto;
-import io.danielegradassai.dto.user.RegistrationUserDto;
-import io.danielegradassai.dto.user.UserOutputDto;
+import io.danielegradassai.dto.role.RoleOutputDto;
+import io.danielegradassai.dto.user.*;
 import io.danielegradassai.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,9 +27,32 @@ public class UserController {
         return new ResponseEntity<>(userService.login(loginUserDto), HttpStatus.OK);
     }
 
+    @PostMapping("/authorRegistration")
+    public ResponseEntity<UserOutputDto> staffRegistration(@RequestBody StaffRegistrationDto registrationUserDto){
+        return new ResponseEntity<>(userService.staffRegistration(registrationUserDto), HttpStatus.CREATED);
+    }
+
     @GetMapping()
     public ResponseEntity<List<UserOutputDto>> findAll(){
         return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
     }
+
+    @GetMapping("/roles/{id}")
+    public ResponseEntity<List<RoleOutputDto>> findRolesById(@PathVariable Long id){
+        return new ResponseEntity<>(userService.findRolesById(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/authors")
+    public List<UserOutputDto> getAllAuthorUsers() {
+        return userService.findAllStaff();
+    }
+
+    @DeleteMapping("/deleteAuthor/{id}")
+    public ResponseEntity<Void> deleteUserStaff(@PathVariable Long id){
+        userService.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
 
 }

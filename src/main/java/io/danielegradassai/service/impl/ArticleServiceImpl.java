@@ -35,13 +35,14 @@ public class ArticleServiceImpl implements ArticleService {
     private final ModelMapper modelMapper;
     private final Validator validator;
     @Override
-    public ArticleOutputDto create(ArticleInputDto articleInputDto, Long userId) {
+    public ArticleOutputDto create(ArticleInputDto articleInputDto) {
         Set<ConstraintViolation<ArticleInputDto>> errors = validator.validate(articleInputDto);
         if (!errors.isEmpty()) {
             throw new CustomValidationException(errors);
         }
-        User user = userRepository.findById(userId)
+        User user = userRepository.findById(articleInputDto.getUserId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Utente non trovato"));
+
         List<Category> categories = categoryRepository.findAllById(articleInputDto.getCategories());
         List<Tag> tags = tagRepository.findAllById(articleInputDto.getTags());
         Article article = new Article();
@@ -64,4 +65,18 @@ public class ArticleServiceImpl implements ArticleService {
         return modelMapper.map(finalArticle, ArticleOutputDto.class);
 
     }
+    @Override
+    public List<ArticleOutputDto> readAll() {
+        return articleRepository.findAll()
+                .stream()
+                .map(rental -> modelMapper.map(rental, ArticleOutputDto.class)).toList();
+    }
+
+    @Override
+    public ArticleOutputDto findById(Long id) {
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Articolo non trovato"));
+        return modelMapper.map(article, ArticleOutputDto.class);
+    }
+
 }
