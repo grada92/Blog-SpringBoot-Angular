@@ -20,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -51,16 +50,7 @@ public class ArticleServiceImpl implements ArticleService {
         article.setUser(user);
         article.setCategories(categories);
         article.setTags(tags);
-
-        if (articleInputDto.getImage() != null && !articleInputDto.getImage().isEmpty()) {
-            try {
-                byte[] imageBytes = articleInputDto.getImage().getBytes();
-                article.setImage(imageBytes);
-            } catch (IOException e) {
-                throw new RuntimeException("Errore immagine", e);
-            }
-        }
-
+        article.setApproved(false);
         Article finalArticle = articleRepository.save(article);
         return modelMapper.map(finalArticle, ArticleOutputDto.class);
 
@@ -69,7 +59,34 @@ public class ArticleServiceImpl implements ArticleService {
     public List<ArticleOutputDto> readAll() {
         return articleRepository.findAll()
                 .stream()
-                .map(rental -> modelMapper.map(rental, ArticleOutputDto.class)).toList();
+                .map(article -> modelMapper.map(article, ArticleOutputDto.class)).toList();
+    }
+
+    @Override
+    public List<ArticleOutputDto> readAllApproved() {
+        return articleRepository.findByIsApproved(true)
+                .stream()
+                .map(article -> modelMapper.map(article, ArticleOutputDto.class))
+                .toList();
+    }
+
+    @Override
+    public List<ArticleOutputDto> readAllUnapproved() {
+        return articleRepository.findByIsApproved(false)
+                .stream()
+                .map(article -> modelMapper.map(article, ArticleOutputDto.class))
+                .toList();
+    }
+
+    @Override
+    public ArticleOutputDto updateApproved(Long articleId) {
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Articolo non trovato"));
+
+        article.setApproved(true);
+        Article updatedArticle = articleRepository.save(article);
+
+        return modelMapper.map(updatedArticle, ArticleOutputDto.class);
     }
 
     @Override

@@ -23,7 +23,6 @@ public class ArticleInputDto {
     private String title;
     @NotBlank(message = "Richiesto contenuto")
     private String content;
-    private MultipartFile image;
     @NotNull(message = "Categoria non può essere nulla")
     private List<Long> categories;
     @NotNull(message = "Tag non può essere nullo")

@@ -10,5 +10,12 @@ public interface ArticleService {
 
     List<ArticleOutputDto> readAll();
 
+    List<ArticleOutputDto> readAllApproved();
+
+    List<ArticleOutputDto> readAllUnapproved();
+
+
+    ArticleOutputDto updateApproved(Long articleId);
+
     ArticleOutputDto findById(Long id);
 }

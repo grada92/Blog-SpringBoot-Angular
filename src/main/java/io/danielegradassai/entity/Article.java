@@ -22,9 +22,8 @@ public class Article {
     private String title;
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
-    @Lob
-    @Column(nullable = true)
-    private byte[] image;
+    @Column(nullable = false)
+    private boolean isApproved;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

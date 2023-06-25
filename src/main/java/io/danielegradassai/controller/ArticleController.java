@@ -28,10 +28,28 @@ public class ArticleController {
         return new ResponseEntity<>(rentals, HttpStatus.OK);
     }
 
+    @GetMapping("/approved")
+    public ResponseEntity<List<ArticleOutputDto>> getApprovedArticles() {
+        List<ArticleOutputDto> approvedArticles = articleService.readAllApproved();
+        return new ResponseEntity<>(approvedArticles, HttpStatus.OK);
+    }
+
+    @GetMapping("/unapproved")
+    public ResponseEntity<List<ArticleOutputDto>> getUnapprovedArticles() {
+        List<ArticleOutputDto> unapprovedArticles = articleService.readAllUnapproved();
+        return new ResponseEntity<>(unapprovedArticles, HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ArticleOutputDto> getArticleById(@PathVariable Long id) {
         ArticleOutputDto article = articleService.findById(id);
         return ResponseEntity.ok(article);
+    }
+
+    @PutMapping("/approved/{articleId}")
+    public ResponseEntity<ArticleOutputDto> approveArticle(@PathVariable Long articleId) {
+        ArticleOutputDto approvedArticle = articleService.updateApproved(articleId);
+        return ResponseEntity.ok(approvedArticle);
     }
 
 

@@ -19,8 +19,8 @@ public class ArticleOutputDto {
     private Long id;
     private String title;
     private String content;
-    private byte[] image;
     private Long userId;
+    private boolean isApproved;
     private List<CategoryDto> categories;
     private List<TagDto> tags;
 
