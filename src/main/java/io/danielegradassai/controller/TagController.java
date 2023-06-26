@@ -17,8 +17,8 @@ public class TagController {
 
     private final TagService tagService;
     @PostMapping
-    public ResponseEntity<TagOutputDto> create(@RequestBody TagInputDto brandInputDto){
-        return new ResponseEntity<>(tagService.create(brandInputDto), HttpStatus.CREATED);
+    public ResponseEntity<TagOutputDto> create(@RequestBody TagInputDto tagInputDto){
+        return new ResponseEntity<>(tagService.create(tagInputDto), HttpStatus.CREATED);
     }
 
     @GetMapping
