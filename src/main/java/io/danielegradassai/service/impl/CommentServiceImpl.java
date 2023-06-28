@@ -26,7 +26,6 @@ public class CommentServiceImpl implements CommentService {
     private final UserRepository userRepository;
     private final ArticleRepository articleRepository;
     private final ModelMapper modelMapper;
-    private final CommentService commentService;
 
     @Override
     public CommentOutputDto create(CommentInputDto commentInputDto) {
@@ -83,20 +82,6 @@ public class CommentServiceImpl implements CommentService {
         return childComments.stream()
                 .map(comment -> modelMapper.map(comment, CommentOutputDto.class)).toList();
     }
-
-    @Override
-    public ArticleOutputDto getArticleById(Long id) {
-        Article article = articleRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Articolo non trovato"));
-
-        List<CommentOutputDto> comments = commentService.getCommentsByArticleId(id);
-
-        ArticleOutputDto articleOutputDto = modelMapper.map(article, ArticleOutputDto.class);
-        articleOutputDto.setComments(comments);
-
-        return articleOutputDto;
-    }
-
 
     @Override
     public void delete(Long commentId) {

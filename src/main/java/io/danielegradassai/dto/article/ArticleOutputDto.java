@@ -1,6 +1,7 @@
 package io.danielegradassai.dto.article;
 
 import io.danielegradassai.dto.comment.CommentOutputDto;
+import io.danielegradassai.dto.vote.VoteOutputDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -25,5 +26,6 @@ public class ArticleOutputDto {
     private List<CategoryDto> categories;
     private List<TagDto> tags;
     private List<CommentOutputDto> comments;
+    private List<VoteOutputDto> votes;
 
 }

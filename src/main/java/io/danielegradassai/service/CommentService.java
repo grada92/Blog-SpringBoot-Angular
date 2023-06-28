@@ -15,7 +15,6 @@ public interface CommentService {
 
     List<CommentOutputDto> getAnotherCommentByParentId(Long parentId);
 
-    ArticleOutputDto getArticleById(Long id);
 
     void delete(Long commentId);
 
