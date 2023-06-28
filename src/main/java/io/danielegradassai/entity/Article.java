@@ -20,7 +20,7 @@ public class Article {
     private Long id;
     @Column(nullable = false)
     private String title;
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String content;
     @Column(nullable = false)
     private boolean isApproved;
@@ -35,6 +35,9 @@ public class Article {
     private List<Tag> tags;
     @OneToMany(mappedBy = "article")
     private List<Vote> votes;
+    @OneToOne
+    @JoinColumn(name = "validation_rule_id")
+    private ValidationAdmin titleValidationRule;
 
     public Article(String title, String content, User user, List<Category> categories, List<Tag> tags) {
         this.title = title;
@@ -42,5 +45,14 @@ public class Article {
         this.user = user;
         this.categories = categories;
         this.tags = tags;
+    }
+
+    public Article(String title, String content, User user, List<Category> categories, List<Tag> tags, ValidationAdmin titleValidationRule) {
+        this.title = title;
+        this.content = content;
+        this.user = user;
+        this.categories = categories;
+        this.tags = tags;
+        this.titleValidationRule = titleValidationRule;
     }
 }

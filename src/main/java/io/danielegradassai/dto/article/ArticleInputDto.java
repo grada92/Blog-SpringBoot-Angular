@@ -19,7 +19,6 @@ public class ArticleInputDto {
 
     private Long userId;
     @NotBlank(message = "Titolo è richiesto")
-    @Size(max = 100, message = "Titolo non può essere superiore a 100 caratteri")
     private String title;
     @NotBlank(message = "Richiesto contenuto")
     private String content;

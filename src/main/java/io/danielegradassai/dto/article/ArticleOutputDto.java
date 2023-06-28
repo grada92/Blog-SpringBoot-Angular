@@ -1,5 +1,6 @@
 package io.danielegradassai.dto.article;
 
+import io.danielegradassai.dto.comment.CommentOutputDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -23,5 +24,6 @@ public class ArticleOutputDto {
     private boolean isApproved;
     private List<CategoryDto> categories;
     private List<TagDto> tags;
+    private List<CommentOutputDto> comments;
 
 }
