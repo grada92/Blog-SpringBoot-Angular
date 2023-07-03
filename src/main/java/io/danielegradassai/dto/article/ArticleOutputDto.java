@@ -27,5 +27,7 @@ public class ArticleOutputDto {
     private List<TagDto> tags;
     private List<CommentOutputDto> comments;
     private List<VoteOutputDto> votes;
+    private int likeCount;
+    private int dislikeCount;
 
 }

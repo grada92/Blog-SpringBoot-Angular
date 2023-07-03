@@ -38,6 +38,8 @@ public class Article {
     @OneToOne
     @JoinColumn(name = "validation_rule_id")
     private ValidationAdmin titleValidationRule;
+    private int likeCount;
+    private int dislikeCount;
 
     public Article(String title, String content, User user, List<Category> categories, List<Tag> tags) {
         this.title = title;

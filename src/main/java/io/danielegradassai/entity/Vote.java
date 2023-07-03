@@ -18,6 +18,8 @@ public class Vote {
     private Long id;
     @Column(nullable = false)
     private boolean liked;
+    @Column(nullable = false)
+    private boolean disliked;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -25,8 +27,9 @@ public class Vote {
     @JoinColumn(name = "article_id", nullable = false)
     private Article article;
 
-    public Vote(boolean liked, User user, Article article) {
+    public Vote(boolean liked,boolean disliked, User user, Article article) {
         this.liked = liked;
+        this.disliked = disliked;
         this.user = user;
         this.article = article;
     }

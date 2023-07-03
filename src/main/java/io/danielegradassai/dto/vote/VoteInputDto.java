@@ -10,4 +10,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class VoteInputDto {
+
+    private boolean liked;
+    private boolean disliked;
+    private Long userId;
+    private Long articleId;
 }
