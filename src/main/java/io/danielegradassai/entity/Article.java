@@ -35,9 +35,6 @@ public class Article {
     private List<Tag> tags;
     @OneToMany(mappedBy = "article")
     private List<Vote> votes;
-    @OneToOne
-    @JoinColumn(name = "validation_rule_id")
-    private ValidationAdmin titleValidationRule;
     private int likeCount;
     private int dislikeCount;
 
@@ -49,12 +46,4 @@ public class Article {
         this.tags = tags;
     }
 
-    public Article(String title, String content, User user, List<Category> categories, List<Tag> tags, ValidationAdmin titleValidationRule) {
-        this.title = title;
-        this.content = content;
-        this.user = user;
-        this.categories = categories;
-        this.tags = tags;
-        this.titleValidationRule = titleValidationRule;
-    }
 }

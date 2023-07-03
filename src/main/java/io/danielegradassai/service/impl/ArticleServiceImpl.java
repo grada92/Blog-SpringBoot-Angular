@@ -68,8 +68,9 @@ public class ArticleServiceImpl implements ArticleService {
         article.setCategories(categories);
         article.setTags(tags);
         article.setApproved(false);
+        article.setDislikeCount(0);
+        article.setLikeCount(0);
         ValidationAdmin validation = validationService.getValidationAdmin();
-        article.setTitleValidationRule(validation);
         Article finalArticle = articleRepository.save(article);
         return modelMapper.map(finalArticle, ArticleOutputDto.class);
     }
