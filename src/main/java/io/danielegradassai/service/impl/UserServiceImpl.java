@@ -16,6 +16,7 @@ import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -42,10 +43,12 @@ public class UserServiceImpl implements UserService {
         if(!errors.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username o password invalidi");
         }
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         User user = userRepository.findByEmail(userDto.getEmail()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "UTENTE NON TROVATO"));
-        if(!user.getPassword().equals(PasswordUtil.crypt(userDto.getPassword()))){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Password errata");
+        if (!bCryptPasswordEncoder.matches(userDto.getPassword(), user.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La password non è valida");
         }
+
         try {
             UserOutputDto userOutputDto = modelMapper.map(user, UserOutputDto.class);
             Map<String, String > claimsPrivati = Map.of("user", objectMapper.writeValueAsString(userOutputDto));
@@ -64,7 +67,8 @@ public class UserServiceImpl implements UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Campi invalidi: riprova");
         }
         User utente = modelMapper.map(registrationUserDto, User.class);
-        utente.setPassword(PasswordUtil.crypt(utente.getPassword()));
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        utente.setPassword(bCryptPasswordEncoder.encode(utente.getPassword()));
         utente.setRoles(Set.of(roleRepository.findByAuthority("ROLE_USER").orElseGet(() -> roleRepository.save(new Role("ROLE_USER")))));
         return modelMapper.map(userRepository.save(utente), UserOutputDto.class);
     }
@@ -97,8 +101,9 @@ public class UserServiceImpl implements UserService {
                 roleRepository.findByAuthority("ROLE_USER").orElseGet(()->roleRepository.save(new Role("ROLE_USER"))),
                 roleRepository.findByAuthority("ROLE_STAFF").orElseGet(()->roleRepository.save(new Role("ROLE_STAFF"))))));
         String password = PasswordUtil.generate();
-        user.setPassword(password);
-        user.setPassword(PasswordUtil.crypt(password));
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encryptedPassword = passwordEncoder.encode(password);
+        user.setPassword(encryptedPassword);
         user = userRepository.save(user);
         emailService.sendConfirmationEmail(user);
         return modelMapper.map(user, UserOutputDto.class);
@@ -108,7 +113,7 @@ public class UserServiceImpl implements UserService {
     public void deleteById(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         if(!user.getRoles().contains(roleRepository.findByAuthority("ROLE_STAFF").get())){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "l' utente selezionato non è un membro dello staff.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "l' utente selezionato non è un membro del Blog.");
         }
         userRepository.deleteById(id);
     }

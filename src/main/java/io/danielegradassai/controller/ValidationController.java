@@ -2,6 +2,7 @@ package io.danielegradassai.controller;
 
 import io.danielegradassai.dto.validation.ValidationInputDto;
 import io.danielegradassai.dto.validation.ValidationOutputDto;
+import io.danielegradassai.entity.ValidationAdmin;
 import io.danielegradassai.service.ValidationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,5 +28,11 @@ public class ValidationController {
         ValidationOutputDto validationOutputDto = validationService.update(validationInputDto);
         return ResponseEntity.ok(validationOutputDto);
     }
+
+    @GetMapping
+    public ValidationAdmin getValidationAdmin() {
+       return validationService.getValidationAdmin();
+    }
+
 
 }

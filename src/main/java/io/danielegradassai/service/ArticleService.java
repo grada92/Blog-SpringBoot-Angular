@@ -19,4 +19,6 @@ public interface ArticleService {
     ArticleOutputDto updateApproved(Long articleId);
 
     ArticleOutputDto findById(Long id);
+
+    List<ArticleOutputDto> getMostLikedArticles();
 }

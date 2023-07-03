@@ -46,6 +46,12 @@ public class ArticleController {
         return ResponseEntity.ok(article);
     }
 
+    @GetMapping("/top")
+    public ResponseEntity<List<ArticleOutputDto>> getTopLikedArticles() {
+        List<ArticleOutputDto> topLikedArticles = articleService.getMostLikedArticles();
+        return new ResponseEntity<>(topLikedArticles, HttpStatus.OK);
+    }
+
     @PutMapping("/approved/{articleId}")
     public ResponseEntity<ArticleOutputDto> approveArticle(@PathVariable Long articleId) {
         ArticleOutputDto approvedArticle = articleService.updateApproved(articleId);

@@ -116,4 +116,12 @@ public class ArticleServiceImpl implements ArticleService {
         return modelMapper.map(article, ArticleOutputDto.class);
     }
 
+    @Override
+    public List<ArticleOutputDto> getMostLikedArticles() {
+        return articleRepository.findTop5ByOrderByLikeCountDesc()
+                .stream()
+                .map(article -> modelMapper.map(article, ArticleOutputDto.class)).toList();
+    }
+
+
 }
