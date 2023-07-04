@@ -47,6 +47,18 @@ public class UserController {
         return userService.findAllStaff();
     }
 
+    @GetMapping("/activate/{id}")
+    public ResponseEntity<Void> activate(@PathVariable Long id) {
+        userService.activateUser(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/resetPassword/{id}")
+    public ResponseEntity<Void> updatePassword(@RequestBody NewPasswordDto newPassword ,@PathVariable Long id){
+        userService.resetPassword(newPassword.getPassword() , id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @DeleteMapping("/deleteAuthor/{id}")
     public ResponseEntity<Void> deleteUserStaff(@PathVariable Long id){
         userService.deleteById(id);

@@ -18,5 +18,9 @@ public interface UserService {
 
     UserOutputDto staffRegistration(StaffRegistrationDto registrationUserDto);
 
+    void activateUser(Long id);
+
+    void resetPassword(String newPassword, Long id);
+
     void deleteById(Long id);
 }

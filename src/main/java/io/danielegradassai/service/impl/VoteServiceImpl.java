@@ -39,54 +39,40 @@ public class VoteServiceImpl implements VoteService {
         Vote voteUser = voteRepository.findByUserAndArticle(user, article);
         boolean liked = voteInputDto.isLiked();
         boolean disliked = voteInputDto.isDisliked();
+
+        // Se l'utente ha già votato l'articolo
         if (voteUser != null) {
-            // CONDIZIONE SE MI PIACE E NON MI PIACE ENTRAMBI SU FALSE
-            if (!liked && !disliked) {
+            // Se il nuovo voto è uguale al voto esistente, rimuovi il voto
+            if ((liked && voteUser.isLiked()) || (disliked && voteUser.isDisliked())) {
                 voteRepository.delete(voteUser);
                 updateVoteCounts(article);
                 return null;
             }
 
-            // PER AZZERRARE CONTEGGIO
-            if (liked && voteUser.isDisliked()) {
-                voteUser.setDisliked(false);
-                updateVoteCounts(article);
-            }
-            else if (disliked && voteUser.isLiked()) {
-                voteUser.setLiked(false);
-                updateVoteCounts(article);
-            }
-            // SE CLICCO DUE VOLTE STESSO VOTO
-            else if (liked && voteUser.isLiked()) {
-                voteRepository.delete(voteUser);
-                updateVoteCounts(article);
-                return null;
-            } else if (disliked && voteUser.isDisliked()) {
-                voteRepository.delete(voteUser);
-                updateVoteCounts(article);
-                return null;
-            }
-
-            // PER AGGIORNARE VOTO SE DIVERSO
+            // Altrimenti, aggiorna il voto esistente con i nuovi valori
             voteUser.setLiked(liked);
             voteUser.setDisliked(disliked);
             voteUser = voteRepository.save(voteUser);
-            updateVoteCounts(article);
-        } else {
+        }
+        // Se l'utente non ha ancora votato l'articolo, crea un nuovo voto
+        else {
             if (liked || disliked) {
                 voteUser = new Vote(liked, disliked, user, article);
                 voteUser = voteRepository.save(voteUser);
-                updateVoteCounts(article);
             } else {
                 return null;
             }
         }
+
+        updateVoteCounts(article);
+
         VoteOutputDto voteOutputDto = modelMapper.map(voteUser, VoteOutputDto.class);
         voteOutputDto.setUserId(user.getId());
         voteOutputDto.setArticleId(article.getId());
 
         return voteOutputDto;
-}
+    }
+
 
     public void updateVoteCounts(Article article) {
         int likeCount = voteRepository.countByArticleAndLiked(article, true);

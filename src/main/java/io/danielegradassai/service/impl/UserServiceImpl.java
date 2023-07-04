@@ -52,7 +52,6 @@ public class UserServiceImpl implements UserService {
         try {
             UserOutputDto userOutputDto = modelMapper.map(user, UserOutputDto.class);
             Map<String, String > claimsPrivati = Map.of("user", objectMapper.writeValueAsString(userOutputDto));
-            //per far fare a spring il preUpdate
             userRepository.save(user);
             return new AuthenticationDto(jwtUtil.generate(userDto.getEmail(), claimsPrivati), userOutputDto);
         } catch (Exception e) {
@@ -69,6 +68,7 @@ public class UserServiceImpl implements UserService {
         User utente = modelMapper.map(registrationUserDto, User.class);
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         utente.setPassword(bCryptPasswordEncoder.encode(utente.getPassword()));
+        utente.setActive(true);
         utente.setRoles(Set.of(roleRepository.findByAuthority("ROLE_USER").orElseGet(() -> roleRepository.save(new Role("ROLE_USER")))));
         return modelMapper.map(userRepository.save(utente), UserOutputDto.class);
     }
@@ -108,6 +108,23 @@ public class UserServiceImpl implements UserService {
         emailService.sendConfirmationEmail(user);
         return modelMapper.map(user, UserOutputDto.class);
     }
+
+    @Override
+    public void activateUser(Long id) {
+        User utente = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attivazione non riuscita: utente non trovato"));
+        utente.setActive(true);
+        userRepository.save(utente);
+    }
+
+    @Override
+    public void resetPassword(String newPassword, Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Utente non trovato"));
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encryptedPassword = passwordEncoder.encode(newPassword);
+        user.setPassword(encryptedPassword);
+        userRepository.save(user);
+    }
+
 
     @Override
     public void deleteById(Long id) {

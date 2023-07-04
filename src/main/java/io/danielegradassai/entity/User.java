@@ -28,6 +28,8 @@ public class User {
     private String email;
     @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
+    private boolean active;
     @OneToMany(mappedBy = "user")
     private List<Article> articles = new ArrayList<>();
     @OneToMany(mappedBy = "user")

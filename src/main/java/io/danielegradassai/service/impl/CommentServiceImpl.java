@@ -1,6 +1,5 @@
 package io.danielegradassai.service.impl;
 
-import io.danielegradassai.dto.article.ArticleOutputDto;
 import io.danielegradassai.dto.comment.CommentInputDto;
 import io.danielegradassai.dto.comment.CommentOutputDto;
 import io.danielegradassai.entity.Article;
