@@ -91,6 +91,22 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    public void deleteUserComment(Long commentId, Long userId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Commento non trovato"));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Utente non trovato"));
+
+        if (!comment.getUser().getId().equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non sei autorizzato a eliminare questo commento");
+        }
+
+        commentRepository.delete(comment);
+    }
+
+
+    @Override
     public void deleteAnotherComment(Long childCommentId) {
         Comment anotherComment = commentRepository.findById(childCommentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Commento figlio non trovato"));

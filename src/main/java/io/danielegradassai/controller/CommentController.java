@@ -49,9 +49,15 @@ public class CommentController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/comments/{anotherCommentId}")
-    public ResponseEntity<Void> deleteAnotherComment(@PathVariable Long anotherCommentId) {
-        commentService.deleteAnotherComment(anotherCommentId);
+    @DeleteMapping("/{commentId}/user-comments")
+    public ResponseEntity<Void> deleteUserComment(@PathVariable Long commentId, @RequestParam Long userId) {
+        commentService.deleteUserComment(commentId, userId);
         return ResponseEntity.noContent().build();
     }
+//
+//    @DeleteMapping("/comments/{anotherCommentId}")
+//    public ResponseEntity<Void> deleteAnotherComment(@PathVariable Long anotherCommentId) {
+//        commentService.deleteAnotherComment(anotherCommentId);
+//        return ResponseEntity.noContent().build();
+//    }
 }
