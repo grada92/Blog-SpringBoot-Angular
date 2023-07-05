@@ -32,9 +32,9 @@ public class User {
     private boolean active;
     @OneToMany(mappedBy = "user")
     private List<Article> articles = new ArrayList<>();
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Vote> votes = new ArrayList<>();
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;

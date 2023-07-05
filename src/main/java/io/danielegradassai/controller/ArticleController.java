@@ -58,5 +58,9 @@ public class ArticleController {
         return ResponseEntity.ok(approvedArticle);
     }
 
-
+    @DeleteMapping("/{articleId}")
+    public ResponseEntity<Void> delete(@PathVariable Long articleId) {
+        articleService.delete(articleId);
+        return ResponseEntity.noContent().build();
+    }
 }

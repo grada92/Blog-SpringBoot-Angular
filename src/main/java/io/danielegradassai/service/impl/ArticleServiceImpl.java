@@ -122,6 +122,12 @@ public class ArticleServiceImpl implements ArticleService {
                 .stream()
                 .map(article -> modelMapper.map(article, ArticleOutputDto.class)).toList();
     }
+    @Override
+    public void delete(Long articleId) {
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Articolo non trovato"));
 
+        articleRepository.delete(article);
+    }
 
 }

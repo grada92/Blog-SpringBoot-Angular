@@ -21,4 +21,6 @@ public interface ArticleService {
     ArticleOutputDto findById(Long id);
 
     List<ArticleOutputDto> getMostLikedArticles();
+
+    void delete(Long articleId);
 }

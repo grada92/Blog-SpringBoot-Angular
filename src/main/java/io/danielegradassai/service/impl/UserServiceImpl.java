@@ -125,13 +125,9 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-
     @Override
     public void deleteById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        if(!user.getRoles().contains(roleRepository.findByAuthority("ROLE_STAFF").get())){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "l' utente selezionato non è un membro del Blog.");
-        }
+        User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Utente non trovato"));
         userRepository.deleteById(id);
     }
 
