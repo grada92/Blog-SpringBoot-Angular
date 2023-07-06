@@ -23,4 +23,8 @@ public interface UserService {
     void resetPassword(String newPassword, Long id);
 
     void deleteById(Long id);
+
+    void blockUser(Long id);
+
+    void activeUser(Long id);
 }

@@ -49,6 +49,10 @@ public class UserServiceImpl implements UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La password non è valida");
         }
 
+        if (!user.isActive()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "L'utente è bloccato");
+        }
+
         try {
             UserOutputDto userOutputDto = modelMapper.map(user, UserOutputDto.class);
             Map<String, String > claimsPrivati = Map.of("user", objectMapper.writeValueAsString(userOutputDto));
@@ -104,6 +108,7 @@ public class UserServiceImpl implements UserService {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encryptedPassword = passwordEncoder.encode(password);
         user.setPassword(encryptedPassword);
+        user.setActive(true);
         user = userRepository.save(user);
         emailService.sendConfirmationEmail(user);
         return modelMapper.map(user, UserOutputDto.class);
@@ -129,6 +134,20 @@ public class UserServiceImpl implements UserService {
     public void deleteById(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Utente non trovato"));
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public void blockUser(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Utente non trovato"));
+        user.setActive(false);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void activeUser(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Utente non trovato"));
+        user.setActive(true);
+        userRepository.save(user);
     }
 
 }

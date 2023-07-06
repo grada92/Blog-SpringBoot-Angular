@@ -32,6 +32,18 @@ public class UserController {
         return new ResponseEntity<>(userService.staffRegistration(registrationUserDto), HttpStatus.CREATED);
     }
 
+    @PostMapping("/block/{userId}")
+    public ResponseEntity<Void> blockUser(@PathVariable Long userId) {
+        userService.blockUser(userId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/active/{userId}")
+    public ResponseEntity<Void> activeUser(@PathVariable Long userId) {
+        userService.activeUser(userId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping()
     public ResponseEntity<List<UserOutputDto>> findAll(){
         return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
