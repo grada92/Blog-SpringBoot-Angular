@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -61,6 +62,8 @@ public class ArticleServiceImpl implements ArticleService {
 
         List<Category> categories = categoryRepository.findAllById(articleInputDto.getCategories());
         List<Tag> tags = tagRepository.findAllById(articleInputDto.getTags());
+        LocalDateTime createdAt = LocalDateTime.now();
+
         Article article = new Article();
         article.setTitle(articleInputDto.getTitle());
         article.setContent(articleInputDto.getContent());
@@ -68,6 +71,7 @@ public class ArticleServiceImpl implements ArticleService {
         article.setCategories(categories);
         article.setTags(tags);
         article.setApproved(false);
+        article.setCreatedAt(createdAt);
         article.setDislikeCount(0);
         article.setLikeCount(0);
         ValidationAdmin validation = validationService.getValidationAdmin();
@@ -84,11 +88,12 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<ArticleOutputDto> readAllApproved() {
-        return articleRepository.findByIsApproved(true)
+        return articleRepository.findByIsApprovedOrderByCreatedAtDesc(true)
                 .stream()
                 .map(article -> modelMapper.map(article, ArticleOutputDto.class))
                 .toList();
     }
+
 
     @Override
     public List<ArticleOutputDto> readAllUnapproved() {

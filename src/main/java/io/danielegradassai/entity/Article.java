@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @NoArgsConstructor
@@ -24,6 +25,8 @@ public class Article {
     private String content;
     @Column(nullable = false)
     private boolean isApproved;
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
