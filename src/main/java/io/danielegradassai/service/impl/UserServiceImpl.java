@@ -3,8 +3,9 @@ package io.danielegradassai.service.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.danielegradassai.dto.role.RoleOutputDto;
 import io.danielegradassai.dto.user.*;
-import io.danielegradassai.entity.Role;
-import io.danielegradassai.entity.User;
+import io.danielegradassai.entity.*;
+import io.danielegradassai.repository.ArticleRepository;
+import io.danielegradassai.repository.CommentRepository;
 import io.danielegradassai.repository.RoleRepository;
 import io.danielegradassai.repository.UserRepository;
 import io.danielegradassai.service.EmailService;
@@ -31,6 +32,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final ArticleRepository articleRepository;
+    private final CommentRepository commentRepository;
     private final ModelMapper modelMapper;
     private final EmailService emailService;
     private final JWTUtil jwtUtil;
@@ -149,5 +152,24 @@ public class UserServiceImpl implements UserService {
         user.setActive(true);
         userRepository.save(user);
     }
+
+    @Override
+    public UserOutputDto getUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Utente non trovato"));
+
+        return modelMapper.map(user, UserOutputDto.class);
+    }
+
+    @Override
+    public void subscribeToNotifications(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Utente non trovato"));
+
+        boolean status = user.isSubscription();
+        user.setSubscription(!status);
+        userRepository.save(user);
+    }
+
 
 }

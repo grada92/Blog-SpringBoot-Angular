@@ -12,10 +12,8 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
-
     @Query("SELECT u.roles FROM User u WHERE u.id = :id")
     List<Role> findRolesByUserId(@Param(value = "id") Long id);
-
     List<User> findByRolesAuthority(String authority);
-
+    List<User> findBySubscriptionTrue();
 }

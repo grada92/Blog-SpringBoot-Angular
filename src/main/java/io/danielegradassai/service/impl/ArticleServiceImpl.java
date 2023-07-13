@@ -9,6 +9,7 @@ import io.danielegradassai.repository.CategoryRepository;
 import io.danielegradassai.repository.TagRepository;
 import io.danielegradassai.repository.UserRepository;
 import io.danielegradassai.service.ArticleService;
+import io.danielegradassai.service.EmailService;
 import io.danielegradassai.service.ValidationService;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -35,6 +36,7 @@ public class ArticleServiceImpl implements ArticleService {
     private final ModelMapper modelMapper;
     private final Validator validator;
     private final ValidationService validationService;
+    private final EmailService emailService;
     @Override
     public ArticleOutputDto create(ArticleInputDto articleInputDto) {
         Set<ConstraintViolation<ArticleInputDto>> errors = validator.validate(articleInputDto);
@@ -76,6 +78,7 @@ public class ArticleServiceImpl implements ArticleService {
         article.setLikeCount(0);
         ValidationAdmin validation = validationService.getValidationAdmin();
         Article finalArticle = articleRepository.save(article);
+
         return modelMapper.map(finalArticle, ArticleOutputDto.class);
     }
 
@@ -110,6 +113,15 @@ public class ArticleServiceImpl implements ArticleService {
 
         article.setApproved(true);
         Article updatedArticle = articleRepository.save(article);
+
+        List<User> subscribedUsers = userRepository.findBySubscriptionTrue();
+
+        // PER INVIARE NOTIFICHE AGLI ISCRITTI
+        for (User userNotification : subscribedUsers) {
+            String message = "E' STATO PUBBLICATO UN NUOVO ARTICOLO SUL NOSTRO SITO REGIONE LAZIO!";
+            emailService.sendNotificationEmail(userNotification, message);
+        }
+
 
         return modelMapper.map(updatedArticle, ArticleOutputDto.class);
     }

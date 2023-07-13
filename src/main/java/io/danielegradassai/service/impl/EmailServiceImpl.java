@@ -32,4 +32,14 @@ public class EmailServiceImpl implements EmailService {
                 "\nLink di attivazione account: " + link + recipient.getId());
         mailSender.send(mail);
     }
+
+    @Override
+    public void sendNotificationEmail(User recipient, String message) {
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setFrom(sender);
+        mail.setTo(recipient.getEmail());
+        mail.setSubject("Nuova notifica");
+        mail.setText(message);
+        mailSender.send(mail);
+    }
 }

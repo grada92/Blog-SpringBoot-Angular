@@ -44,9 +44,19 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PostMapping("/subscribe/{userId}")
+    public ResponseEntity<String> subscribeToNotifications(@PathVariable Long userId) {
+        userService.subscribeToNotifications(userId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping()
     public ResponseEntity<List<UserOutputDto>> findAll(){
         return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<UserOutputDto> findById(@PathVariable Long id){
+        return new ResponseEntity<>(userService.getUser(id), HttpStatus.OK);
     }
 
     @GetMapping("/roles/{id}")

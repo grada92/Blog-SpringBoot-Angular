@@ -14,5 +14,6 @@ public class UserOutputDto {
     private String lastName;
     private String email;
     private boolean active;
+    private boolean subscription;
 
 }

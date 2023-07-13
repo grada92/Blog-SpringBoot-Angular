@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -40,6 +41,8 @@ public class Article {
     private List<Vote> votes;
     private int likeCount;
     private int dislikeCount;
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
+    private List<Notification> notifications = new ArrayList<>();
 
     public Article(String title, String content, User user, List<Category> categories, List<Tag> tags) {
         this.title = title;

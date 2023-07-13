@@ -27,4 +27,9 @@ public interface UserService {
     void blockUser(Long id);
 
     void activeUser(Long id);
+
+    UserOutputDto getUser(Long userId);
+
+    void subscribeToNotifications(Long userId);
+
 }

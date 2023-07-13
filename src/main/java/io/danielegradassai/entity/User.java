@@ -30,6 +30,8 @@ public class User {
     private String password;
     @Column(nullable = false)
     private boolean active;
+    @Column(nullable = false)
+    private boolean subscription;
     @OneToMany(mappedBy = "user")
     private List<Article> articles = new ArrayList<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
@@ -38,6 +40,8 @@ public class User {
     private List<Vote> votes = new ArrayList<>();
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Notification> notifications = new ArrayList<>();
 
     public User(String firstName, String lastName, String email, String password, Set<Role> roles) {
         this.firstName = firstName;
@@ -45,5 +49,6 @@ public class User {
         this.email = email;
         this.password = password;
         this.roles = roles;
+        this.subscription = false;
     }
 }
