@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -43,14 +44,12 @@ public class ArticleServiceImpl implements ArticleService {
         if (!errors.isEmpty()) {
             throw new CustomValidationException(errors);
         }
-
         // VALIDAZIONE TITOLO
         ValidationAdmin validationAdmin = validationService.getValidationAdmin();
         int maxTitleLength = validationAdmin.getMaxTitleLength();
         if (articleInputDto.getTitle().length() > maxTitleLength) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La lunghezza del titolo supera il limite consentito");
         }
-
         // VALIDAZIONE CONTENT
         ValidationAdmin validationAdmin1 = validationService.getValidationAdmin();
         int maxContentLength = validationAdmin.getMaxContentLength();
@@ -113,15 +112,17 @@ public class ArticleServiceImpl implements ArticleService {
 
         article.setApproved(true);
         Article updatedArticle = articleRepository.save(article);
-
         List<User> subscribedUsers = userRepository.findBySubscriptionTrue();
+        Set<Long> notifiedUserIds = new HashSet<>();
 
-        // PER INVIARE NOTIFICHE AGLI ISCRITTI
+        // PER NOTIFICHE
         for (User userNotification : subscribedUsers) {
-            String message = "E' STATO PUBBLICATO UN NUOVO ARTICOLO SUL NOSTRO SITO REGIONE LAZIO!";
-            emailService.sendNotificationEmail(userNotification, message);
+            if (!notifiedUserIds.contains(userNotification.getId())) {
+                String message = "E' STATO PUBBLICATO UN NUOVO ARTICOLO SUL NOSTRO SITO REGIONE LAZIO!";
+                emailService.sendNotificationEmail(userNotification, message);
+                notifiedUserIds.add(userNotification.getId());
+            }
         }
-
 
         return modelMapper.map(updatedArticle, ArticleOutputDto.class);
     }

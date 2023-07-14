@@ -32,8 +32,6 @@ public class Comment {
     private Comment parentComment;
     @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL)
     private List<Comment> anotherComments = new ArrayList<>();
-    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
-    private List<Notification> notifications = new ArrayList<>();
 
     public Comment(String content, User user, Article article) {
         this.content = content;

@@ -11,14 +11,15 @@ import io.danielegradassai.repository.ArticleRepository;
 import io.danielegradassai.repository.UserRepository;
 import io.danielegradassai.repository.VoteRepository;
 import io.danielegradassai.service.VoteService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-
 @RequiredArgsConstructor
 @Service
 public class VoteServiceImpl implements VoteService {
@@ -29,6 +30,7 @@ public class VoteServiceImpl implements VoteService {
     private final ModelMapper modelMapper;
 
     @Override
+    @Transactional
     public VoteOutputDto voteArticle(VoteInputDto voteInputDto) {
         User user = userRepository.findById(voteInputDto.getUserId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Utente non trovato"));
@@ -36,29 +38,33 @@ public class VoteServiceImpl implements VoteService {
         Article article = articleRepository.findById(voteInputDto.getArticleId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Articolo non trovato"));
 
-        Vote voteUser = voteRepository.findByUserAndArticle(user, article);
+        Vote existingVote = voteRepository.findByUserAndArticle(user, article);
         boolean liked = voteInputDto.isLiked();
-        boolean disliked = voteInputDto.isDisliked();
 
-        // Se l'utente ha già votato l'articolo
-        if (voteUser != null) {
-            // Se il nuovo voto è uguale al voto esistente, rimuovi il voto
-            if ((liked && voteUser.isLiked()) || (disliked && voteUser.isDisliked())) {
-                voteRepository.delete(voteUser);
+        // SE UTENTE HA GIA' VOTATO
+        if (existingVote != null) {
+            if (liked == existingVote.isLiked()) {
+                voteRepository.delete(existingVote);
                 updateVoteCounts(article);
+
+                if (liked) {
+                    user.getLikedArticles().remove(article);
+                }
+
+                userRepository.save(user);
+
                 return null;
             }
 
-            // Altrimenti, aggiorna il voto esistente con i nuovi valori
-            voteUser.setLiked(liked);
-            voteUser.setDisliked(disliked);
-            voteUser = voteRepository.save(voteUser);
+            existingVote.setLiked(liked);
+            existingVote = voteRepository.save(existingVote);
         }
-        // Se l'utente non ha ancora votato l'articolo, crea un nuovo voto
         else {
-            if (liked || disliked) {
-                voteUser = new Vote(liked, disliked, user, article);
-                voteUser = voteRepository.save(voteUser);
+            if (liked) {
+                existingVote = new Vote(true, false, user, article);
+                existingVote = voteRepository.save(existingVote);
+                user.getLikedArticles().add(article);
+                userRepository.save(user);
             } else {
                 return null;
             }
@@ -66,13 +72,12 @@ public class VoteServiceImpl implements VoteService {
 
         updateVoteCounts(article);
 
-        VoteOutputDto voteOutputDto = modelMapper.map(voteUser, VoteOutputDto.class);
+        VoteOutputDto voteOutputDto = modelMapper.map(existingVote, VoteOutputDto.class);
         voteOutputDto.setUserId(user.getId());
         voteOutputDto.setArticleId(article.getId());
 
         return voteOutputDto;
     }
-
 
     public void updateVoteCounts(Article article) {
         int likeCount = voteRepository.countByArticleAndLiked(article, true);

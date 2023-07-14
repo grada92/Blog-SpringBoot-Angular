@@ -39,10 +39,10 @@ public class Article {
     private List<Tag> tags;
     @OneToMany(mappedBy = "article")
     private List<Vote> votes;
+    @ManyToMany(mappedBy = "likedArticles")
+    private List<User> likedByUsers;
     private int likeCount;
     private int dislikeCount;
-    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
-    private List<Notification> notifications = new ArrayList<>();
 
     public Article(String title, String content, User user, List<Category> categories, List<Tag> tags) {
         this.title = title;

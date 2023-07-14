@@ -16,6 +16,9 @@ public class EmailServiceImpl implements EmailService {
 
     @Value("${email.link}")
     private String link;
+
+    @Value("${email.link2}")
+    private String link2;
     @Value("${spring.mail.username}")
     private String sender;
 
@@ -39,7 +42,8 @@ public class EmailServiceImpl implements EmailService {
         mail.setFrom(sender);
         mail.setTo(recipient.getEmail());
         mail.setSubject("Nuova notifica");
-        mail.setText(message);
+        mail.setText(message + link2);
         mailSender.send(mail);
     }
+
 }

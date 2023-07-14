@@ -40,8 +40,8 @@ public class User {
     private List<Vote> votes = new ArrayList<>();
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Notification> notifications = new ArrayList<>();
+    @ManyToMany
+    private List<Article> likedArticles;
 
     public User(String firstName, String lastName, String email, String password, Set<Role> roles) {
         this.firstName = firstName;

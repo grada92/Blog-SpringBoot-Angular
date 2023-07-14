@@ -9,6 +9,7 @@ import io.danielegradassai.repository.ArticleRepository;
 import io.danielegradassai.repository.CommentRepository;
 import io.danielegradassai.repository.UserRepository;
 import io.danielegradassai.service.CommentService;
+import io.danielegradassai.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ public class CommentServiceImpl implements CommentService {
     private final UserRepository userRepository;
     private final ArticleRepository articleRepository;
     private final ModelMapper modelMapper;
+    private final EmailService emailService;
 
     @Override
     public CommentOutputDto create(CommentInputDto commentInputDto) {
@@ -41,6 +43,14 @@ public class CommentServiceImpl implements CommentService {
         }
         Comment comment = new Comment(commentInputDto.getContent() , user, article, parentComment);
         Comment savedComment = commentRepository.save(comment);
+
+        List<User> likedUsers = article.getLikedByUsers();
+        for (User likedUser : likedUsers) {
+            if (likedUser.getId().equals(user.getId())) {
+                String message = "Nuovo commento sull'articolo a cui hai messo mi piace.";
+                emailService.sendNotificationEmail(likedUser, message);
+            }
+        }
         return modelMapper.map(savedComment, CommentOutputDto.class);
     }
 
