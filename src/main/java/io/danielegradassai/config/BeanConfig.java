@@ -47,6 +47,19 @@ public class BeanConfig {
                 sessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         httpSecurity.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
             authorizationManagerRequestMatcherRegistry.requestMatchers("/**").permitAll();
+            /* DA TOGLIERE
+            authorizationManagerRequestMatcherRegistry.requestMatchers("/user/login", "/user/sign", "user/resetPassword/**").permitAll();
+            authorizationManagerRequestMatcherRegistry.requestMatchers("user/roles/**").authenticated();
+            authorizationManagerRequestMatcherRegistry.requestMatchers(HttpMethod.GET, "/article/**", "/comment/**","/tag/**","category/**","vote/**").permitAll();
+            authorizationManagerRequestMatcherRegistry.requestMatchers(HttpMethod.POST, "/vote/**").permitAll();
+            authorizationManagerRequestMatcherRegistry.requestMatchers(HttpMethod.POST, "/article/**","/comment/**","/tag/**","category/**").hasAnyRole("STAFF", "ADMIN");
+            authorizationManagerRequestMatcherRegistry.requestMatchers(HttpMethod.POST, "/validation/**").hasRole("ADMIN");
+            authorizationManagerRequestMatcherRegistry.requestMatchers(HttpMethod.DELETE,"/vote/**","/comment/**").permitAll();
+            authorizationManagerRequestMatcherRegistry.requestMatchers(HttpMethod.DELETE,"/article/**", "/tag/**","category/**").hasAnyRole("STAFF", "ADMIN");
+            authorizationManagerRequestMatcherRegistry.requestMatchers(HttpMethod.DELETE, "/user/deleteAuthor/**").hasRole("ADMIN");
+        });
+            */
+
         });
         httpSecurity.addFilterBefore(new Filter() {
             @Override
